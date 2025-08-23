@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mlg BN Quiz - Accueil</title>
+<style>
+  @keyframes backgroundMove {
+    0% {background-position: 0 0;}
+    50% {background-position: 100px 100px;}
+    100% {background-position: 0 0;}
+  }
+
+  body {
+   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(#111, #000);
+    overflow: hidden;
+    color: #fff;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: repeating-radial-gradient(circle, #09993a33, transparent 20px);
+    animation: backgroundMove 20s linear infinite;
+    z-index: 0;
+  }
+
+  h1 {
+    position: relative;
+    z-index: 1;
+    font-size: 3em;
+    color: #09993a;
+    text-shadow: 0 0 10px #09993a, 0 0 20px #09993a;
+    margin-bottom: 50px;
+  }
+
+  .button {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    display: block;
+    background-color: #222;
+    color: #fff;
+    border: 2px solid #09993a;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px auto;
+    width: 250px;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-shadow: 0 0 5px #000;
+  }
+
+  .button:hover {
+    box-shadow: 0 0 20px #09993a, 0 0 40px #09993a;
+    color: #111;
+    background-color: #09993a;
+  }
+
+  .footer-button {
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎮 Mlg BN Quiz</h1>
+
+  <a href="quizgaming.html" class="button">Quiz spécial Gaming</a>
+  <a href="quizgeneral.html" class="button">Quiz Genéral</a>
+   <a href="classement.html" class="button">Classement</a>
+<section class="promo">
+  <h1>🚀 Lance ton business en ligne avec Système.io !</h1>
+  <p>Tu veux créer un site, automatiser ton business et gagner de l’argent ?  
+  Clique ci-dessous pour découvrir <strong>Système.io</strong>.</p>
+  <a href="https://systeme.io/fr?sa=sa0245048169e5ed8715c8dfa40e13eb082ef2348d" class="button" target="_blank">
+   Télécharger</a>
+</section>
+<section class="promo-kinguin">
+  <h1>💎 Obtiens tes jeux style sur PC sur Kinguin !</h1>
+  <p>Profite des meilleurs prix pour Steam, Epic Games et bien plus.  
+  Clique ci-dessous pour accéder à Kinguin et obtenir tes clés de jeux.</p>  
+  <a href="https://lowest-prices.eu/a/2k7lDHp235TBpoZ" class="button" target="_blank">
+    🔗 Accéder à Kinguin
+  </a>
+</section>
+
+
+<audio id="clickSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
+
+<script>
+  function playClick() {
+    document.getElementById('clickSound').play();
+  }
+
+  function startQuiz(type) {
+    playClick();
+    if(type === 'gamer') {
+      alert("Tu vas commencer le Quiz Gamer !");
+    } else {
+      alert("Tu vas commencer le Quiz Général !");
+    }
+  }
+
+  function viewLeaderboard() {
+    playClick();
+    alert("Tu vas voir le classement !");
+  }
+  </script>
+
+</body>
+</html>

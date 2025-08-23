@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mlg BN Quiz - Jeux Multi-Plateformes</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #111; color: #fff; text-align: center; margin:0; padding:50px 20px; }
+  h1, h2 { color: #09993a; }
+  .question-box { background-color:#222; border:2px solid #09993a; border-radius:12px; padding:20px; margin-bottom:30px; }
+  .option-btn { display:block; background-color:#222; color:#fff; border:2px solid #09993a; border-radius:12px; padding:15px; margin:10px auto; width:250px; cursor:pointer; transition:0.3s; }
+  .option-btn:hover { background-color:#09993a; color:#111; }
+  .footer-btn { margin-top:20px; }
+</style>
+</head>
+<body>
+
+<h1>🎮 Mlg BN Quiz</h1>
+<h2 id="level">Niveau 1</h2>
+<p>Relève le defit avec 10 niveaux et 10 question par niveau</p>
+<div class="question-box">
+  <p id="question">Question ici</p>
+</div>
+
+<button class="option-btn" id="opt0" onclick="selectAnswer(0)">Option A</button>
+<button class="option-btn" id="opt1" onclick="selectAnswer(1)">Option B</button>
+<button class="option-btn" id="opt2" onclick="selectAnswer(2)">Option C</button>
+<button class="option-btn" id="opt3" onclick="selectAnswer(3)">Option D</button>
+
+<button class="option-btn footer-btn" onclick="skipQuestion()">Sauter la question (-50 points)</button>
+<button class="option-btn footer-btn" id="continueBtn" style="display:none;" onclick="nextQuestion()">Continuer ➡️</button>
+
+<h2>Score : <span id="score">0</span></h2>
+
+<script>
+let questions = [
+  // ===== Niveau 1 =====
+  {q:"Quel jeu est disponible sur Android ?", options:["PUBG Mobile","The Witcher 3","FIFA 22 PS5","Mario Kart 8"], answer:0},
+  {q:"Quel jeu PPSSPP met en scène Kratos ?", options:["Gran Turismo","God of War: Chains of Olympus","Minecraft","Super Mario 64"], answer:1},
+  {q:"Quel jeu Nintendo est un jeu de course avec des karts ?", options:["Zelda Breath of the Wild","Pokemon Snap","Mario Kart","Splatoon"], answer:2},
+  {q:"Quel jeu PlayStation est un RPG en monde ouvert ?", options:["Horizon Forbidden West","Gran Turismo","FIFA 21","LittleBigPlanet"], answer:0},
+  {q:"Quel jeu PC est connu pour son mode bataille royale ?", options:["Valorant","FIFA 22","Mario Party","Fortnite"], answer:3},
+  {q:"Quel jeu Android est un puzzle populaire ?", options:["God of War","Candy Crush Saga","Zelda","Gran Turismo"], answer:1},
+  {q:"Quel jeu PPSSPP est un RPG célèbre ?", options:["Final Fantasy VII: Crisis Core","Mario Kart","Valorant","FIFA"], answer:0},
+  {q:"Quel personnage emblématique est sur Nintendo ?", options:["Kratos","Link","Geralt","Lara Croft"], answer:1},
+  {q:"Quel jeu PS a pour personnage Nathan Drake ?", options:["Mario Kart","Pokemon","The Sims 4","Uncharted"], answer:3},
+  {q:"Quel jeu PC est connu pour ses constructions en cubes ?", options:["FIFA","Gran Turismo","Horizon Zero Dawn","Minecraft"], answer:3},
+
+  // ===== Niveau 2 =====
+  {q:"Quel jeu Android est un battle royale ?", options:["Super Mario Odyssey","Gran Turismo","Garena Free Fire","God of War"], answer:2},
+  {q:"Quel jeu PPSSPP a un gameplay de plateforme ?", options:["FIFA 22","Patapon","Valorant","Horizon"], answer:1},
+  {q:"Quel jeu Nintendo met en scène Samus Aran ?", options:["Metroid","FIFA 21","PUBG Mobile","Gran Turismo"], answer:0},
+  {q:"Quel jeu PS est une simulation de course ?", options:["Gran Turismo","Candy Crush","Minecraft","Mario Kart"], answer:0},
+  {q:"Quel jeu PC est un FPS célèbre ?", options:["Counter Strike","Mario Party","God of War","Pokemon"], answer:0},
+  {q:"Quel jeu Android est multijoueur en ligne ?", options:["Clash Royale","The Witcher 3","Zelda","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est centré sur le football ?", options:["Mario Kart","FIFA 14 PSP","Minecraft","Fortnite"], answer:1},
+  {q:"Quel jeu Nintendo est un RPG d’aventure ?", options:["Valorant","Candy Crush","Zelda: Breath of the Wild","Horizon"], answer:2},
+  {q:"Quel jeu PS met en scène Aloy ?", options:["Gran Turismo","Horizon Zero Dawn","Mario Kart","Clash of Clans"], answer:1},
+  {q:"Quel jeu PC est développé par Mojang ?", options:["Minecraft","The Witcher 3","PUBG","FIFA"], answer:0},
+
+  // ===== Niveau 3 =====
+  {q:"Quel jeu est célèbre pour ses constructions et mods ?", options:["FIFA","Fortnite","Minecraft","Zelda"], answer:2},
+  {q:"Quel personnage est emblématique de Nintendo ?", options:["Mario","Kratos","Geralt","Aloy"], answer:0},
+  {q:"Dans quel jeu PS4 incarne-t-on Aloy ?", options:["Horizon Zero Dawn","Gran Turismo","Uncharted","God of War"], answer:0},
+  {q:"Quel jeu est connu pour son mode battle royale sur PC ?", options:["Candy Crush","Metroid","FIFA","Fortnite"], answer:3},
+  {q:"Quel jeu mobile a popularisé les parties rapides multijoueurs ?", options:["Clash Royale","PUBG Mobile","Mario Kart","Valorant"], answer:0},
+  {q:"Quel jeu PPSSPP a pour héros Patapon ?", options:["Patapon","FIFA 22","Valorant","Horizon"], answer:0},
+  {q:"Quel jeu Nintendo met en scène Link ?", options:["Mario Kart","Zelda: Breath of the Wild","Splatoon","Pokemon"], answer:1},
+  {q:"Quel jeu PS célèbre a Nathan Drake comme héros ?", options:["Mario Kart","Gran Turismo","Uncharted","God of War"], answer:2},
+  {q:"Quel jeu PC est un FPS compétitif ?", options:["Counter Strike","Mario Party","God of War","FIFA"], answer:0},
+  {q:"Quel jeu Android est un MOBA populaire ?", options:["FIFA 22","Minecraft","Zelda","Mobile Legends"], answer:3},
+
+  // ===== Niveau 4 =====
+  {q:"Quel jeu PPSSPP met en avant le football ?", options:["Patapon","FIFA 14 PSP","Mario Kart","Minecraft"], answer:1},
+  {q:"Quel jeu Nintendo est un RPG d’aventure ?", options:["Valorant","Candy Crush","Horizon","Zelda: Link’s Awakening"], answer:3},
+  {q:"Quel jeu PS a un univers post-apocalyptique ?", options:["Horizon Zero Dawn","Gran Turismo","Mario Kart","Clash of Clans"], answer:0},
+  {q:"Quel jeu PC permet de créer des mondes en cubes ?", options:["Minecraft","Fortnite","PUBG","FIFA"], answer:0},
+  {q:"Quel jeu Android est un battle royale rapide ?", options:["Garena Free Fire","Clash Royale","Mario Kart","God of War"], answer:0},
+  {q:"Quel jeu PPSSPP est un RPG avec combats stratégiques ?", options:["FIFA 22", "Final Fantasy VII: Crisis Core", "Valorant","Horizon"], answer:1},
+  {q:"Quel jeu Nintendo est basé sur des courses kart ?", options:["Mario Kart 8","Zelda Breath of the Wild","Pokemon Snap","Splatoon"], answer:0},
+  {q:"Quel jeu PS est un RPG ouvert et immersif ?", options:["Horizon Forbidden West","Gran Turismo","LittleBigPlanet","FIFA 21"], answer:0},
+  {q:"Quel jeu PC est célèbre pour le mode créatif et survie ?", options:["Valorant","FIFA 22","Minecraft","Mario Party"], answer:2},
+  {q:"Quel jeu mobile est un puzzle addictif ?", options:["Candy Crush Saga","God of War","Zelda","Gran Turismo"], answer:0},
+
+  // ===== Niveau 5 =====
+  {q:"Quel jeu Android a popularisé le format MOBA sur mobile ?", options:["Clash Royale","Mobile Legends","PUBG Mobile","Candy Crush"], answer:1},
+  {q:"Quel jeu PS met en scène Joel et Ellie ?", options:["The Last of Us","Uncharted","Horizon Zero Dawn","God of War"], answer:0},
+  {q:"Quel jeu PPSSPP est centré sur le combat tactique ?", options:["Tactics Ogre: Let Us Cling Together","FIFA 22","Patapon","Valorant"], answer:0},
+  {q:"Quel jeu Nintendo met en avant Pikachu ?", options:["Zelda","Mario Kart","Splatoon","Pokemon Jaune",], answer:3},
+  {q:"Quel jeu PC est connu pour son battle royale coloré ?", options:["Valorant","FIFA","Fortnite","Minecraft"], answer:2},
+  {q:"Quel jeu Android est un endless runner ?", options:["Subway Surfers","PUBG Mobile","Clash Royale","Candy Crush"], answer:0},
+  {q:"Quel jeu PS est une simulation de vie ?", options:["Gran Turismo","Uncharted","Horizon","The Sims 4"], answer:3},
+  {q:"Quel jeu PPSSPP met en avant les batailles de cartes ?", options:["Yu-Gi-Oh! GX Tag Force","FIFA","Patapon","Minecraft"], answer:0},
+  {q:"Quel jeu Nintendo est un RPG tactique ?", options:["Fire Emblem","Zelda","Mario Kart","Pokemon"], answer:0},
+  {q:"Quel jeu PC est un jeu de stratégie en temps réel ?", options:["Age of Empires II","Counter Strike","Minecraft","FIFA"], answer:0},
+
+  // ===== Niveau 6 =====
+  {q:"Quel jeu Android est un jeu de cartes stratégique ?", options:["Clash Royale","PUBG Mobile","Candy Crush","Subway Surfers"], answer:0},
+  {q:"Quel jeu PS a un monde ouvert médiéval ?", options:["Uncharted","FIFA 21","Gran Turismo","Elden Ring"], answer:3},
+  {q:"Quel jeu PPSSPP est un beat'em up classique ?", options:["God Hand","Patapon","FIFA","Valorant"], answer:0},
+  {q:"Quel jeu Nintendo est une aventure avec Link ?", options:["Metroid","Zelda: Breath of the Wild","Mario Kart","Pokemon Snap"], answer:1},
+  {q:"Quel jeu PC est un FPS tactique ?", options:["Valorant","Minecraft","FIFA","Mario Party"], answer:0},
+  {q:"Quel jeu Android est un MOBA populaire ?", options:["Mobile Legends","Clash Royale","Candy Crush","Subway Surfers"], answer:0},
+  {q:"Quel jeu PS est centré sur des courses automobiles ?", options:["Gran Turismo","Horizon Zero Dawn","God of War","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est un RPG tactique ?", options:["FIFA","Valorant","Patapon","Tactics Ogre"], answer:3},
+  {q:"Quel jeu Nintendo est un jeu de combat en arène ?", options:["Zelda","Mario Kart","Super Smash Bros","Pokemon"], answer:2},
+  {q:"Quel jeu PC est connu pour son mode créatif et survie ?", options:["Fortnite","Minecraft","Valorant","FIFA"], answer:1},
+
+  // ===== Niveau 7 =====
+  {q:"Quel jeu Android est un runner infini ?", options:["Clash Royale","Temple Run","Candy Crush","PUBG Mobile"], answer:1},
+  {q:"Quel jeu PS est un RPG avec Geralt de Riv ?", options:["The Witcher 3","Horizon Zero Dawn","Gran Turismo","God of War"], answer:0},
+  {q:"Quel jeu PPSSPP met en scène des batailles stratégiques ?", options:["Final Fantasy Tactics","FIFA 22","Patapon","Valorant"], answer:0},
+  {q:"Quel jeu Nintendo est un RPG avec Pikachu ?", options:["Zelda","Mario Kart","Pokemon Jaune","Splatoon"], answer:2},
+  {q:"Quel jeu PC est un MOBA populaire ?", options:["Minecraft","FIFA","Valorant","League of Legends"], answer:3},
+  {q:"Quel jeu Android est un puzzle coloré ?", options:["Candy Crush Saga","PUBG Mobile","Clash Royale","Subway Surfers"], answer:0},
+  {q:"Quel jeu PS est un monde ouvert avec Aloy ?", options:["Horizon Zero Dawn","Gran Turismo","God of War","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est centré sur le football ?", options:["Patapon","Valorant","FIFA 14 PSP","Minecraft"], answer:2},
+  {q:"Quel jeu Nintendo est un jeu de course ?", options:["Zelda","Mario Kart","Pokemon Snap","Splatoon"], answer:1},
+  {q:"Quel jeu PC est un jeu de construction en cubes ?", options:["Minecraft","Fortnite","Valorant","FIFA"], answer:0},
+
+  // ===== Niveau 8 =====
+  {q:"Quel jeu Android est un FPS multijoueur ?", options:["Call of Duty Mobile","Clash Royale","Candy Crush","Subway Surfers"], answer:0},
+  {q:"Quel jeu PS est un RPG médiéval fantastique ?", options:["Gran Turismo","Uncharted","Elden Ring","God of War"], answer:2},
+  {q:"Quel jeu PPSSPP est un beat'em up ?", options:["God Hand","Patapon","FIFA","Valorant"], answer:0},
+  {q:"Quel jeu Nintendo est un jeu d’aventure avec Link ?", options:["Zelda: Breath of the Wild","Mario Kart","Pokemon Snap","Splatoon"], answer:0},
+  {q:"Quel jeu PC est un battle royale populaire ?", options:["Minecraft","Valorant","FIFA","Fortnite"], answer:3},
+  {q:"Quel jeu Android est un MOBA avec héros uniques ?", options:["Clash Royale","Mobile Legends","Candy Crush","Subway Surfers"], answer:1},
+  {q:"Quel jeu PS est centré sur des courses automobiles réalistes ?", options:["Gran Turismo","Horizon Zero Dawn","God of War","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est un RPG tactique ?", options:["Tactics Ogre","FIFA","Valorant","Patapon"], answer:0},
+  {q:"Quel jeu Nintendo est un jeu de combat en équipe ?", options:["Zelda","Mario Kart","Pokemon","Super Smash Bros",], answer:3},
+  {q:"Quel jeu PC est connu pour son mode créatif et survie ?", options:["Fortnite","Minecraft","Valorant","FIFA"], answer:1},
+
+  // ===== Niveau 9 =====
+  {q:"Quel jeu Android est un endless runner célèbre ?", options:["Clash Royale","Subway Surfers","Candy Crush","PUBG Mobile"], answer:1},
+  {q:"Quel jeu PS est un RPG ouvert avec Geralt ?", options:["Horizon Zero Dawn","Gran Turismo","God of War","The Witcher 3",], answer:3},
+  {q:"Quel jeu PPSSPP est un jeu de stratégie au tour par tour ?", options:["Final Fantasy Tactics","FIFA 22","Patapon","Valorant"], answer:0},
+  {q:"Quel jeu Nintendo est un RPG classique avec Pikachu ?", options:["Zelda","Mario Kart","Splatoon","Pokemon Jaune"], answer:3},
+  {q:"Quel jeu PC est un FPS compétitif ?", options:["Counter Strike","Minecraft","FIFA","Valorant"], answer:0},
+  {q:"Quel jeu Android est un MOBA rapide et stratégique ?", options:["Mobile Legends","Clash Royale","Candy Crush","Subway Surfers"], answer:0},
+  {q:"Quel jeu PS est un monde ouvert immersif ?", options:["Horizon Forbidden West","Gran Turismo","God of War","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est centré sur le football ?", options:["FIFA 14 PSP","Patapon","Valorant","Minecraft"], answer:0},
+  {q:"Quel jeu Nintendo est un RPG d’aventure ?", options:["Valorant","Candy Crush","Zelda: Link’s Awakening","Horizon"], answer:2},
+  {q:"Quel jeu PC permet de créer et survivre dans un monde cubique ?", options:["Fortnite","Minecraft","Valorant","FIFA"], answer:1},
+
+  // ===== Niveau 10 =====
+  {q:"Quel jeu Android est un shooter multijoueur ?", options:["Clash Royale","Candy Crush","Call of Duty Mobile","Subway Surfers"], answer:2},
+  {q:"Quel jeu PS est un RPG d’action et aventure ?", options:["Elden Ring","Gran Turismo","Uncharted","God of War"], answer:0},
+  {q:"Quel jeu PPSSPP est un beat'em up stratégique ?", options:["Patapon","FIFA","Valorant","God Hand"], answer:3},
+  {q:"Quel jeu Nintendo est un jeu d’aventure avec Link ?", options:["Mario Kart","Pokemon Snap","Splatoon","Zelda: Breath of the Wild",], answer:3},
+  {q:"Quel jeu PC est un battle royale célèbre ?", options:["Minecraft","Valorant","Fortnite","FIFA"], answer:2},
+  {q:"Quel jeu PS est un jeu de course réaliste ?", options:["Gran Turismo","Horizon Zero Dawn","God of War","Uncharted"], answer:0},
+  {q:"Quel jeu PPSSPP est un RPG tactique célèbre ?", options:["Tactics Ogre","FIFA","Valorant","Patapon"], answer:0},
+  {q:"Quel jeu Nintendo est un jeu de combat multijoueur ?", options:["Super Smash Bros","Zelda","Mario Kart","Pokemon"], answer:0},
+  {q:"Quel jeu PC est un jeu de construction et survie ?", options:["Minecraft","Fortnite","Valorant","FIFA"], answer:0},
+  {q:"Quelle console est sortie en 2006 ?", options:["PS4","Xbox One","GameCube","Nintendo Wii"], answer:3},
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function shuffleOptions(question) {
+  let arr = [...question.options.map((opt, idx) => ({opt, idx}))];
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function loadQuestion() {
+  if(currentQuestion >= questions.length){
+    alert("Quiz terminé ! Score final : " + score);
+    return;
+  }
+  let level = Math.floor(currentQuestion / 10) + 1;
+  document.getElementById("level").innerText = "Niveau " + level;
+
+  let q = questions[currentQuestion];
+  let shuffled = shuffleOptions(q);
+  document.getElementById("question").innerText = q.q;
+  for(let i=0; i<4; i++){
+    document.getElementById("opt"+i).innerText = shuffled[i].opt;
+    document.getElementById("opt"+i).dataset.realIndex = shuffled[i].idx;
+  }
+
+  // Réafficher les options et masquer continuer
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    if(btn.id !== "continueBtn") btn.style.display = 'block';
+  });
+  document.getElementById("continueBtn").style.display = 'none';
+}
+
+function selectAnswer(selected) {
+  let realIndex = parseInt(document.getElementById("opt"+selected).dataset.realIndex);
+  if(realIndex === questions[currentQuestion].answer){
+    score += 10;
+    alert("Bonne réponse ! +10 points");
+  } else {
+    score -= 20;
+    alert("Mauvaise réponse ! -20 points");
+  }
+  document.getElementById("score").innerText = score;
+
+  // Masquer les options et afficher le bouton continuer
+  document.querySelectorAll('.option-btn').forEach(btn => btn.style.display='none');
+  document.getElementById("continueBtn").style.display='block';
+}
+
+function skipQuestion(){
+  if(score < 50){
+    alert("Vous n'avez pas assez de points pour sauter cette question ! (Il faut au moins 50 points)");
+    return;
+  }
+  score -= 50;
+  alert("Question sautée ! -50 points");
+  document.getElementById("score").innerText = score;
+
+  // Masquer les options et afficher le bouton continuer
+  document.querySelectorAll('.option-btn').forEach(btn => btn.style.display='none');
+  document.getElementById("continueBtn").style.display='block';
+}
+
+function nextQuestion(){
+  currentQuestion++;
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+  <a href="Mlg BN quiz.html" class="option-btn">Retour</a>
+</body>
+</html>

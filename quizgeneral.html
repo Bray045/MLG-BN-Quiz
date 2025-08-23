@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mlg BN Quiz - Jeux Multi-Plateformes</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background-color: #111; color: #fff; text-align: center; margin:0; padding:50px 20px; }
+  h1, h2 { color: #09993a; }
+  .question-box { background-color:#222; border:2px solid #09993a; border-radius:12px; padding:20px; margin-bottom:30px; }
+  .option-btn { display:block; background-color:#222; color:#fff; border:2px solid #09993a; border-radius:12px; padding:15px; margin:10px auto; width:250px; cursor:pointer; transition:0.3s; }
+  .option-btn:hover { background-color:#09993a; color:#111; }
+  .footer-btn { margin-top:20px; }
+</style>
+</head>
+<body>
+
+<h1>🎮 Mlg BN Quiz</h1>
+<h2 id="level">Niveau 1</h2>
+<div class="question-box">
+  <p id="question">Question ici</p>
+</div>
+
+<button class="option-btn" id="opt0" onclick="selectAnswer(0)">Option A</button>
+<button class="option-btn" id="opt1" onclick="selectAnswer(1)">Option B</button>
+<button class="option-btn" id="opt2" onclick="selectAnswer(2)">Option C</button>
+<button class="option-btn" id="opt3" onclick="selectAnswer(3)">Option D</button>
+
+<button class="option-btn footer-btn" onclick="skipQuestion()">Sauter la question (-50 points)</button>
+<button class="option-btn footer-btn" id="continueBtn" style="display:none;" onclick="nextQuestion()">Continuer ➡️</button>
+
+<h2>Score : <span id="score">0</span></h2>
+
+<script>
+let questions = [
+  // ===== Niveau 1 (1–10) =====
+  {q:"Quelle est la capitale de la France ?", options:["Londres","Paris","Rome","Berlin"], answer:1},
+  {q:"Combien font 2 + 2 ?", options:["3","5","4","6"], answer:2},
+  {q:"Quel est le plus grand océan du monde ?", options:["Indien","Pacifique","Atlantique","Arctique"], answer:1},
+  {q:"Qui a peint la Joconde ?", options:["Picasso","Léonard de Vinci","Monet","Van Gogh"], answer:1},
+  {q:"Quelle planète est la plus proche du Soleil ?", options:["Mars","Mercure","Vénus","Jupiter"], answer:1},
+  {q:"Quelle couleur obtient-on en mélangeant bleu et jaune ?", options:["Violet","Orange","Vert","Marron"], answer:2},
+  {q:"Combien y a-t-il de continents ?", options:["7","5","6","8"], answer:0},
+  {q:"L’animal terrestre le plus rapide ?", options:["Guépard","Antilope","Cheval","Lion"], answer:0},
+  {q:"Quel pays est à l’origine de la pizza ?", options:["Grèce","Italie","France","Espagne"], answer:1},
+  {q:"Langue la plus parlée au monde (locuteurs natifs) ?", options:["Anglais","Espagnol","Hindi","Mandarin"], answer:3},
+
+  // ===== Niveau 2 (11–20) =====
+  {q:"Qui a traversé l’Atlantique en 1492 ?", options:["Magellan","Christophe Colomb","Vasco de Gama","James Cook"], answer:1},
+  {q:"Monnaie du Japon ?", options:["Won","Yuan","Yen","Dollar"], answer:2},
+  {q:"Où se trouve la tour de Pise ?", options:["Espagne","Portugal","Italie","France"], answer:2},
+  {q:"Métal le plus utilisé pour les câbles électriques ?", options:["Fer","Cuivre","Aluminium","Plomb"], answer:1},
+  {q:"Auteur de ‘Les Misérables’ ?", options:["Balzac","Zola","Hugo","Molière"], answer:2},
+  {q:"Le ‘pays du Soleil-Levant’ désigne le…", options:["Chine","Japon","Corée du Sud","Thaïlande"], answer:1},
+  {q:"Plus grande planète du Système solaire ?", options:["Saturne","Jupiter","Uranus","Neptune"], answer:1},
+  {q:"Capitale du Sénégal ?", options:["Bamako","Conakry","Dakar","Abidjan"], answer:2},
+  {q:"Boisson traditionnelle la plus consommée en Chine ?", options:["Café","Lait","Thé","Jus"], answer:2},
+  {q:"Révolution française : année de début ?", options:["1815","1776","1789","1914"], answer:2},
+
+  // ===== Niveau 3 (21–30) =====
+  {q:"Inventeur associé à l’ampoule à incandescence ?", options:["Tesla","Edison","Watt","Faraday"], answer:1},
+  {q:"Quelle mer borde Israël et l’Égypte ?", options:["Mer Noire","Mer Rouge","Mer Caspienne","Mer du Nord"], answer:1},
+  {q:"‘La Nuit étoilée’ est une œuvre de…", options:["Dali","Monet","Van Gogh","Picasso"], answer:2},
+  {q:"Organe qui pompe le sang ?", options:["Rein","Poumon","Cœur","Foie"], answer:2},
+  {q:"Plus long fleuve (selon de nombreuses mesures récentes) ?", options:["Nil","Amazone","Yangtsé","Congo"], answer:1},
+  {q:"Où se trouve la pyramide de Khéops ?", options:["Égypte","Mexique","Chine","Inde"], answer:0},
+  {q:"Capitale de l’Australie ?", options:["Sydney","Melbourne","Canberra","Perth"], answer:2},
+  {q:"Formule de l’eau ?", options:["CO2","H2O","O2","NaCl"], answer:1},
+  {q:"Sport avec raquette et volant ?", options:["Squash","Tennis","Badminton","Tennis de table"], answer:2},
+  {q:"Capitale du Brésil ?", options:["Rio","Brasilia","São Paulo","Salvador"], answer:1},
+
+  // ===== Niveau 4 (31–40) =====
+  {q:"Qui a formulé la théorie de la relativité ?", options:["Einstein","Newton","Galilée","Planck"], answer:0},
+  {q:"Quel continent n’a pas de désert chaud ?", options:["Afrique","Europe","Océanie","Asie"], answer:1},
+  {q:"Auteur de ‘Le Petit Prince’ ?", options:["Saint-Exupéry","Camus","Sartre","Maupassant"], answer:0},
+  {q:"Capitale du Canada ?", options:["Ottawa","Toronto","Montréal","Vancouver"], answer:0},
+  {q:"Gaz majoritaire de l’atmosphère terrestre ?", options:["Oxygène","Azote","Argon","CO2"], answer:1},
+  {q:"Peintre du ‘Cri’ ?", options:["Munch","Klimt","Chagall","Renoir"], answer:0},
+  {q:"Qui a marché le premier sur la Lune ?", options:["Buzz Aldrin","Neil Armstrong","Youri Gagarine","Michael Collins"], answer:1},
+  {q:"Plus grand désert chaud du monde ?", options:["Gobi","Sahara","Kalahari","Mojave"], answer:1},
+  {q:"Élément chimique ‘Fe’ ?", options:["Fluor","Fer","Francium","Fermium"], answer:1},
+  {q:"Instrument de musique à cordes frottées ?", options:["Flûte","Piano","Violon","Harpe"], answer:2},
+
+  // ===== Niveau 5 (41–50) =====
+  {q:"Qui a écrit ‘1984’ ?", options:["George Orwell","Aldous Huxley","J.K. Rowling","Ray Bradbury"], answer:0},
+  {q:"Capitale de la Turquie ?", options:["Istanbul","Ankara","Izmir","Bursa"], answer:1},
+  {q:"La photosynthèse a lieu surtout dans…", options:["Les racines","Les feuilles","Les fleurs","Les fruits"], answer:1},
+  {q:"Quel est l’organe de l’équilibre ?", options:["Oreille interne","Œil","Peau","Cervelet"], answer:0},
+  {q:"Quel pays a la forme d’une botte ?", options:["Italie","Chili","Norvège","Vietnam"], answer:0},
+  {q:"Qui a composé la 9e symphonie ‘Hymne à la joie’ ?", options:["Mozart","Beethoven","Bach","Vivaldi"], answer:1},
+  {q:"Quel est le symbole chimique de l’or ?", options:["Ag","Au","Pt","G"], answer:1},
+  {q:"Quel sport a des périodes appelées ‘mi-temps’ ?", options:["Basket","Football","Rugby à XIII","Handball"], answer:1},
+  {q:"Quel pays compte les chutes d’Iguaçu (avec l’Argentine) ?", options:["Bolivie","Brésil","Pérou","Uruguay"], answer:1},
+  {q:"La table périodique a été organisée par…", options:["Curie","Mendeleïev","Bohr","Rutherford"], answer:1},
+
+  // ===== Niveau 6 (51–60) =====
+  {q:"Qui est considéré comme le père de l’informatique théorique ?", options:["Alan Turing","John von Neumann","Claude Shannon","Tim Berners-Lee"], answer:0},
+  {q:"Capitale de l’Éthiopie ?", options:["Nairobi","Addis-Abeba","Khartoum","Asmara"], answer:1},
+  {q:"Le mont Everest se situe dans la chaîne de…", options:["Andes","Alpes","Himalaya","Rocheuses"], answer:2},
+  {q:"Qui a découvert la pénicilline ?", options:["Pasteur","Fleming","Koch","Curie"], answer:1},
+  {q:"Quel pays a pour devise ‘E pluribus unum’ (sur les sceaux) ?", options:["Royaume-Uni","États-Unis","Canada","Australie"], answer:1},
+  {q:"Quelle est la langue officielle du Brésil ?", options:["Espagnol","Portugais","Français","Anglais"], answer:1},
+  {q:"Quel métal est liquide à température ambiante ?", options:["Mercure","Sodium","Potassium","Gallium"], answer:0},
+  {q:"Qui a écrit ‘L’Étranger’ ?", options:["Camus","Sartre","Flaubert","Proust"], answer:0},
+  {q:"Quel est le plus grand mammifère marin ?", options:["Orque","Baleine bleue","Cachalot","Rorqual commun"], answer:1},
+  {q:"Quel est l’autre nom du VIH ?", options:["Virus du SIDA","Virus de la grippe","Virus Zika","Coronavirus"], answer:0},
+
+  // ===== Niveau 7 (61–70) =====
+  {q:"Qui a unifié l’Allemagne en 1871 ?", options:["Otto von Bismarck","Guillaume II","Napoléon III","Metternich"], answer:0},
+  {q:"Quel est l’organe qui produit l’insuline ?", options:["Foie","Pancréas","Rate","Thyroïde"], answer:1},
+  {q:"Quel pays africain n’est pas enclavé ?", options:["Tchad","Niger","Bénin","Mali"], answer:2},
+  {q:"Quelle est la capitale de la Nouvelle-Zélande ?", options:["Auckland","Wellington","Christchurch","Dunedin"], answer:1},
+  {q:"Dans quel art utilise-t-on des ‘haïkus’ ?", options:["Poésie japonaise","Théâtre Nô","Calligraphie","Ikebana"], answer:0},
+  {q:"Quelle molécule transporte l’oxygène dans le sang ?", options:["Chlorophylle","Hémoglobine","Myoglobine","Insuline"], answer:1},
+  {q:"Qui a peint la fresque de la Chapelle Sixtine ?", options:["Michel-Ange","Raphaël","Botticelli","Donatello"], answer:0},
+  {q:"Quel pays a la plus grande population d’Afrique ?", options:["Égypte","Éthiopie","Nigéria","RDC"], answer:2},
+  {q:"Quelle est l’unité de mesure de la force ?", options:["Joule","Pascal","Newton","Watt"], answer:2},
+  {q:"Quelle écriture est utilisée pour le russe ?", options:["Latin","Arabe","Cyrillique","Grec"], answer:2},
+
+  // ===== Niveau 8 (71–80) =====
+  {q:"Quel traité a mis fin à la Première Guerre mondiale ?", options:["Versailles","Trianon","Sèvres","Saint-Germain"], answer:0},
+  {q:"Quel pays est à cheval sur l’Europe et l’Asie ?", options:["Grèce","Turquie","Chypre","Géorgie"], answer:1},
+  {q:"Qui a développé la théorie de la sélection naturelle ?", options:["Lamarck","Darwin","Wallace","Mendel"], answer:1},
+  {q:"Quelle est la capitale de la Suède ?", options:["Oslo","Copenhague","Stockholm","Helsinki"], answer:2},
+  {q:"Quel est le symbole chimique du sodium ?", options:["Na","So","Sd","Sn"], answer:0},
+  {q:"Le Kilimandjaro se situe dans…", options:["Kenya","Tanzanie","Ouganda","Rwanda"], answer:1},
+  {q:"Qui a écrit ‘Germinal’ ?", options:["Hugo","Zola","Maupassant","Flaubert"], answer:1},
+  {q:"Quel compositeur est associé aux ‘Quatre Saisons’ ?", options:["Bach","Vivaldi","Handel","Haydn"], answer:1},
+  {q:"Quel pays a pour capitale ‘Rabat’ ?", options:["Tunisie","Maroc","Algérie","Mauritanie"], answer:1},
+  {q:"Quelle particule a une charge négative ?", options:["Proton","Neutron","Électron","Positron"], answer:2},
+
+  // ===== Niveau 9 (81–90) =====
+  {q:"Quel empire a construit le Colisée ?", options:["Grec","Persan","Romain","Égyptien"], answer:2},
+  {q:"Quel est le plus vaste pays du monde par superficie ?", options:["Canada","Chine","États-Unis","Russie"], answer:3},
+  {q:"Qui a écrit ‘À la recherche du temps perdu’ ?", options:["Proust","Flaubert","Stendhal","Zola"], answer:0},
+  {q:"Quel organe filtre le sang et produit l’urine ?", options:["Foie","Reins","Rate","Pancréas"], answer:1},
+  {q:"Quelle est la capitale de l’Inde ?", options:["Mumbai","New Delhi","Bangalore","Calcutta"], answer:1},
+  {q:"Qui a proposé les lois du mouvement et de la gravitation ?", options:["Einstein","Newton","Galilée","Kepler"], answer:1},
+  {q:"Quel pays abrite la ville de Marrakech ?", options:["Algérie","Maroc","Tunisie","Égypte"], answer:1},
+  {q:"Quel instrument mesure les séismes ?", options:["Baromètre","Anémomètre","Sismographe","Thermomètre"], answer:2},
+  {q:"Quel gaz est nécessaire à la respiration humaine ?", options:["Azote","Oxygène","Hélium","CO2"], answer:1},
+  {q:"Quelle mer est la plus salée du monde ?", options:["Mer Morte","Mer Rouge","Mer Noire","Mer Caspienne"], answer:0},
+
+  // ===== Niveau 10 (91–100) =====
+  {q:"Qui a théorisé l’inconscient et la psychanalyse ?", options:["Freud","Jung","Adler","Pavlov"], answer:0},
+  {q:"Quel pays a remporté la Coupe du Monde de la FIFA 2018 ?", options:["Allemagne","Argentine","France","Brésil"], answer:2},
+  {q:"Quelle est la plus grande île du monde ?", options:["Groenland","Madagascar","Bornéo","Nouvelle-Guinée"], answer:0},
+  {q:"Quel est l’organe principal de la photosynthèse chez les plantes ?", options:["Tige","Feuille","Racine","Fleur"], answer:1},
+  {q:"Qui a écrit ‘Don Quichotte’ ?", options:["Cervantès","Lope de Vega","Borges","García Márquez"], answer:0},
+  {q:"Quelle équation est célèbre en physique relativiste ?", options:["F = ma","V = RI","E = mc^2","pV = nRT"], answer:2},
+  {q:"Quelle est la capitale de la Norvège ?", options:["Oslo","Stockholm","Copenhague","Helsinki"], answer:0},
+  {q:"Quel élément chimique a le numéro atomique 1 ?", options:["Hélium","Hydrogène","Lithium","Oxygène"], answer:1},
+  {q:"Quel écrivain russe a écrit ‘Crime et Châtiment’ ?", options:["Tolstoï","Dostoïevski","Tchekhov","Pouchkine"], answer:1},
+  {q:"Quel est le point d’ébullition de l’eau au niveau de la mer ?", options:["90°C","100°C","110°C","120°C"], answer:1},
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function shuffleOptions(question) {
+  let arr = [...question.options.map((opt, idx) => ({opt, idx}))];
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function loadQuestion() {
+  if(currentQuestion >= questions.length){
+    alert("Quiz terminé ! Score final : " + score);
+    return;
+  }
+  let level = Math.floor(currentQuestion / 10) + 1;
+  document.getElementById("level").innerText = "Niveau " + level;
+
+  let q = questions[currentQuestion];
+  let shuffled = shuffleOptions(q);
+  document.getElementById("question").innerText = q.q;
+  for(let i=0; i<4; i++){
+    document.getElementById("opt"+i).innerText = shuffled[i].opt;
+    document.getElementById("opt"+i).dataset.realIndex = shuffled[i].idx;
+  }
+
+  // Réafficher les options et masquer continuer
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    if(btn.id !== "continueBtn") btn.style.display = 'block';
+  });
+  document.getElementById("continueBtn").style.display = 'none';
+}
+
+function selectAnswer(selected) {
+  let realIndex = parseInt(document.getElementById("opt"+selected).dataset.realIndex);
+  if(realIndex === questions[currentQuestion].answer){
+    score += 10;
+    alert("Bonne réponse ! +10 points");
+  } else {
+    score -= 20;
+    alert("Mauvaise réponse ! -20 points");
+  }
+  document.getElementById("score").innerText = score;
+
+  // Masquer les options et afficher le bouton continuer
+  document.querySelectorAll('.option-btn').forEach(btn => btn.style.display='none');
+  document.getElementById("continueBtn").style.display='block';
+}
+
+function skipQuestion(){
+  if(score < 50){
+    alert("Vous n'avez pas assez de points pour sauter cette question ! (Il faut au moins 50 points)");
+    return;
+  }
+  score -= 50;
+  alert("Question sautée ! -50 points");
+  document.getElementById("score").innerText = score;
+
+  // Masquer les options et afficher le bouton continuer
+  document.querySelectorAll('.option-btn').forEach(btn => btn.style.display='none');
+  document.getElementById("continueBtn").style.display='block';
+}
+
+function nextQuestion(){
+  currentQuestion++;
+  loadQuestion();
+}
+loadQuestion();
+</script>
+  <a href="Mlg BN quiz.html" class="option-btn">Retour</a>
+</body>
+</html>
